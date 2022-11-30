@@ -1,0 +1,59 @@
+{
+	"name": "dataflow_load_synapse_employeemaster",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "db_adls_empmaster",
+						"type": "DatasetReference"
+					},
+					"name": "sourceadlsemployeemaster"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "db_synapse_nycpayroll_emp_md",
+						"type": "DatasetReference"
+					},
+					"name": "sinksynapseemployeemaster"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          EmployeeID as string,",
+				"          LastName as string,",
+				"          FirstName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceadlsemployeemaster",
+				"sourceadlsemployeemaster sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmployeeID as string,",
+				"          LastName as string,",
+				"          FirstName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          EmployeeID,",
+				"          LastName,",
+				"          FirstName",
+				"     )) ~> sinksynapseemployeemaster"
+			]
+		}
+	}
+}

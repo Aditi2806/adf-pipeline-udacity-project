@@ -1,0 +1,52 @@
+{
+	"name": "Pipeline_Aggregate_Load_NYCPayroll_Summary_to_Synapse",
+	"properties": {
+		"activities": [
+			{
+				"name": "Dataflow - Aggregate 2021 and 2020 data",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "dataflow_aggregate_synapse_summary_table",
+						"type": "DataFlowReference",
+						"parameters": {
+							"ParamFiscalYear": {
+								"value": "@pipeline().parameters.GlobalParamFiscalYear",
+								"type": "Expression"
+							}
+						}
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "ls_adls",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "adlsnycpayroll-aditi-b/dirstaging"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"GlobalParamFiscalYear": {
+				"type": "int"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-30T21:11:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

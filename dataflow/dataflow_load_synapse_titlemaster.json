@@ -1,0 +1,56 @@
+{
+	"name": "dataflow_load_synapse_titlemaster",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "db_adls_titlemaster",
+						"type": "DatasetReference"
+					},
+					"name": "sourceadlstitlemaster"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "db_synapse_nycpayroll_titlemaster",
+						"type": "DatasetReference"
+					},
+					"name": "sinksynapsetitlemaster"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          TitleCode as string,",
+				"          TitleDescription as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceadlstitlemaster",
+				"sourceadlstitlemaster sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TitleCode as string,",
+				"          TitleDescription as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          TitleCode,",
+				"          TitleDescription",
+				"     )) ~> sinksynapsetitlemaster"
+			]
+		}
+	}
+}
